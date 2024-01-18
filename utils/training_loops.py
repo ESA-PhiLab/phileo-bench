@@ -55,7 +55,7 @@ class TrainBase():
         self.scheduler = self.set_scheduler()
 
         if self.warmup:
-            multistep_milestone =  list(range(self.warmup_steps)+1)
+            multistep_milestone =  list(range(1, self.warmup_steps+1))
             self.scheduler_warmup = torch.optim.lr_scheduler.MultiStepLR(
                 self.optimizer, milestones=multistep_milestone, gamma=(warmup_gamma))
 

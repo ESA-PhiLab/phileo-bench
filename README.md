@@ -106,31 +106,54 @@ python n_shot_experiment_classifier.py [--experiment_name EXPERIMENT_NAME] --mod
 
 ### Parameters
 ```bash
-  --experiment_name EXPERIMENT_NAME                         Experiment folder name
-  --model                                                   Select appropriate model 
-  --lr LR                                                   Set learning rate
-  --batch_size BATCH_SIZE                                   Set batch size
-  --epochs EPOCHS                                           Set training epochs
-  --early_stop EARLY_STOP                                   Set training loop patience for early stopping
-  --lr_scheduler                                            Select learning rate scheduler
-  --warmup WARMUP                                           Enables epoch linear warmup 
-  --device DEVICE                                           Select training device
-  --num_workers NUM_WORKERS                                 Set number of workers
-  --vis_val VIS_VAL                                         Enable saving of intermediate visualization plots
-  --downstream_task {roads,building,lc}                     Select downstream task
-  --input_channels                                          Define number of input channels
-  --input_size                                              Define hw of input array
-  --output_channels                                         Define number of input channels
-  --regions REGIONS                                         Select regions to be included if None all regions will be included
-  --n_shot N_SHOT                                           Loads n-samples of the training data from specified geographic regions
-  --split_ratio SPLIT_RATIO                                 Loads a percentage of the training data from specified geographic regions
-  --augmentations AUGMENTATIONS                             Enables augmentations
-  --pretrained_model_path                                   Path to weights of pretrained model
-  --freeze_pretrained                                       Freeze pretrained weights and only train decoder/head
-  --data_path_128_10m                                       Path to 10m resolution 128x128 patches
-  --data_path_224_10m                                       Path to 10m resolution 224x224 patches
-  --data_path_224_30m                                       Path to 30m resolution 224x224 patches
-  --data_parallel                                           If set True pytorch model will be wrapped in nn.data_parallel a trained on multiple gpus 
+        -- experiment_name (str):                           Experiment name
+        -- downstream_task (str):                           Select downstream task to test, validate and test on.
+                                                            Options: ['lc', 'building', 'roads',
+                                                                      'lc_classification', 'building_classification', 'roads_classification']
+        -- model_name (str):                                Select model.
+                                                            Options: CNN_LIST = ['baseline_cnn', 'core_unet_nano','core_unet_tiny','core_unet_base', 'core_unet_large', 'core_unet_huge',
+                                                                                 'core_vae_nano', 'resnet_imagenet', 'resnet', 'core_encoder_nano', 'resnet_imagenet', 'resnet',]
+                                                                     VIT_CNN_LIST = ['vit_cnn_base', 'vit_cnn_base_wSkip']
+                                                                     MIXER_LIST = ['mixer_nano', 'mixer_tiny', 'mixer_base', 'mixer_large', 'mixer_huge']
+                                                                     VIT_LIST = ['linear_vit_base', 'linear_vit_larger', 'linear_vit_huge','autoencoder_vit_base',
+                                                                                 'autoencoder_vit_large', 'autoencoder_vit_huge']
+                                                                     CNN_PRETRAINED_LIST = ['GeoAware_core_nano', 'GeoAware_core_tiny', 'GeoAware_mixer_nano', 'GeoAware_mixer_tiny',
+                                                                                            'GeoAware_contrastive_core_nano', 'GeoAware_mh_pred_core_nano', 'GeoAware_combined_core_nano',
+                                                                                            'GeoAware_core_autoencoder_nano', 'seasonal_contrast']
+                                                                     VIT_CNN_PRETRAINED_LIST = ['prithvi', 'SatMAE', 'vit_cnn', 'vit_cnn_gc']
+                                                                     N.B. Some models have classification variants e.g. 'resnet_imagenet_classifier'
+
+        -- augmentations (bool, optional):                  Toggle on/off basic data augmentations (Rotation, Mirror, Noise). Defaults to False.
+        -- batch_size (int, optional):                      Define training batch size. Defaults to 16.
+        -- model_device (_type_, optional):                 Select model device. Defaults to torch.device('cuda' if torch.cuda.is_available() else 'cpu').
+        -- generator_device (_type_, optional):             Select dataloader device. Defaults to torch.device('cuda' if torch.cuda.is_available() else 'cpu').
+        -- num_workers (int, optional):                     Select number of workers for dataloader. Defaults to 4.
+        -- early_stop (int, optional):                      Define early stoping patience. Defaults to 25.
+        -- epochs (int, optional):                          Define number of training epochs. Defaults to 250.
+        -- input_channels (int, optional):                  Define number of data input channels. Defaults to 10.
+        -- output_channels (int, optional):                 Define number of model output channels. Defaults to 1.
+        -- input_size (int, optional):                      Define data input size. Defaults to 128.
+        -- lr (float, optional):                            Define optimizer learning rate. Defaults to 0.001.
+        -- lr_scheduler (str, optional):                    Define learning rate scheduler. Options: [None, 'reduce_on_plateau', 'cosine_annealing']. Defaults to None.
+        -- n_shot (int, optional):                          Define dataset protocol - n samples per region. Defaults to None.
+        -- split_ratio (float, optional):                   Define dataset protocol - percentage of full dataset. Defaults to 0.1.
+        -- regions (list, optional):                        Select regions to include in training and test sets. If no regions are defined (None) all avalible regions will be included
+                                                            Options: [None, 'denmark-1', 'denmark-2', 'east-africa', 'egypt-1', 'eq-guinea', 'europe', 'ghana-1',
+                                                                     'isreal-1', 'isreal-2', 'japan', 'nigeria', 'north-america', 'senegal', 'south-america',
+                                                                     'tanzania-1', 'tanzania-2', 'tanzania-3', 'tanzania-4', 'tanzania-5', 'uganda-1'] Defaults to None.
+        -- vis_val (bool, optional):                        If set to True data visulisations will be generated at each validation step. Defaults to True.
+        -- warmup (bool, optional):                         If set to True a linear optimizer warmup phase will occour. Defaults to False.
+        -- warmp_steps (int, optional):                     Define number of steps for linear warmup phase. Defaults to 5.
+        -- warmup_gamma (int, optional):                    Define learning rate increase per step in linear warmup phase - new_lr = lr*gamma. Defaults to 10.
+                                                            N.B. initial lr is calulated as follows init_lr = lr/(gamma**warmup_steps)
+        -- pretrained_model_path (str, optional):           For pretrained models define the model weights path. Defaults to None.
+        -- freeze_pretrained (bool, optional):              If True pretrained encoder weights will be frozen during training. Defaults to None.
+        -- data_path_128_10m (str, optional):               Define data path for 128x128 10m resolution dataset. Defaults to None.
+        -- data_path_224_10m (str, optional):               Define data path for 224x224 10m resolution dataset. Defaults to None.
+        -- data_path_224_30m (str, optional):               Define data path for 224x224 30m resolution dataset. Defaults to None.
+        -- output_path (str, optional):                     Define folder to save artifacts in. Defaults to None.
+        -- data_parallel (bool, optional):                  If set to True Model training will be parallized on multiple gpus. Defaults to False.
+        -- device_ids (list, optional):                     Define GPU IDs to use for parallization. Defaults to None.
 ```
 ### Main files
 

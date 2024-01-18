@@ -1,25 +1,30 @@
-experiment_name: p_split
+experiment_name: unet_lc_experiment
+downstream_task: lc
 model_name: core_unet_nano
+augmentations: True
+batch_size: 64
+model_device: cuda
+generator_device: cuda
+num_workers: 24
+early_stop: 15
+epochs: 500
+input_channels: 10
+output_channels: 11
+input_size: 128
 lr: 0.0001
 lr_scheduler: reduce_on_plateau
-batch_size: 30
-epochs: 500
-vis_val: True
-downstream_task: lc
-input_channels: 10
-input_size: 128
-output_channels: 11
-regions:
-n_shot: null
+n_shot: 50
 split_ratio: null
-augmentations: True
-early_stop: 15
+regions: null
+vis_val: True
 warmup: True
-device: cuda
-num_workers: 24
+warmp_steps: 5
+warmup_gamma: 10
 pretrained_model_path:
 freeze_pretrained:
 data_path_128_10m: /home/phimultigpu/phileo_NFS/phileo_data/downstream/downstream_dataset_patches_np/
 data_path_224_10m: /home/phimultigpu/phileo_NFS/phileo_data/downstream/downstream_dataset_patches_np_224/
 data_path_224_30m: /home/phimultigpu/phileo_NFS/phileo_data/downstream/downstream_dataset_patches_np_HLS/
+output_path: /home/phimultigpu/phileo_NFS/phileo_data/experiments
 data_parallel: False
+device_ids: [0, 1, 2, 3]
