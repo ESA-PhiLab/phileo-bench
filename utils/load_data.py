@@ -235,11 +235,11 @@ def load_data(x_train, y_train, x_val, y_val, x_test, y_test, device, with_augme
     ds_val = beo.Dataset(x_val, y_val, callback=cb_decoder)
 
     dl_train = DataLoader(ds_train, batch_size=batch_size, shuffle=True, pin_memory=True, num_workers=num_workers,
-                          drop_last=False, generator=torch.Generator('cuda'))
+                          drop_last=False, generator=torch.Generator(device))
     dl_test = DataLoader(ds_test, batch_size=batch_size, shuffle=False, pin_memory=True, num_workers=num_workers,
-                         drop_last=False, generator=torch.Generator('cuda'))
+                         drop_last=False, generator=torch.Generator(device))
     dl_val = DataLoader(ds_val, batch_size=batch_size, shuffle=True, pin_memory=True, num_workers=num_workers,
-                        drop_last=False, generator=torch.Generator('cuda'))
+                        drop_last=False, generator=torch.Generator(device))
 
     return dl_train, dl_test, dl_val
 

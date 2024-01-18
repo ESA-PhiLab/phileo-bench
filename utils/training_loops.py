@@ -26,7 +26,8 @@ class TrainBase():
 
     def __init__(self, model: nn.Module, device: torch.device, train_loader: DataLoader, val_loader: DataLoader,
                  test_loader: DataLoader, epochs:int = 50, early_stop:int=25, lr: float = 0.001, lr_scheduler: str = None, warmup:bool=True,
-                 metrics: list = None, name: str="model", out_folder :str ="trained_models/", visualise_validation:bool=True, ):
+                 metrics: list = None, name: str="model", out_folder :str ="trained_models/", visualise_validation:bool=True, 
+                 warmup_steps:int=5, warmup_gamma:int=10):
 
         self.test_loss = None
         self.last_epoch = None
@@ -42,6 +43,7 @@ class TrainBase():
         self.metrics = metrics
         self.lr_scheduler = lr_scheduler
         self.warmup = warmup
+        self.warmup_steps = warmup_steps
         self.name = name
         self.out_folder = out_folder
         self.visualise_validation = visualise_validation
@@ -53,8 +55,9 @@ class TrainBase():
         self.scheduler = self.set_scheduler()
 
         if self.warmup:
+            multistep_milestone =  list(range(self.warmup_steps)+1)
             self.scheduler_warmup = torch.optim.lr_scheduler.MultiStepLR(
-                self.optimizer, milestones=[1, 2, 3, 4, 5], gamma=(10))
+                self.optimizer, milestones=multistep_milestone, gamma=(warmup_gamma))
 
         # initialize torch device
         torch.set_default_device(self.device)
@@ -279,7 +282,7 @@ class TrainBase():
             if epoch == 0 and self.warmup == True:
                 s = self.scheduler_warmup
                 print('Starting linear warmup phase')
-            elif epoch == 5 and self.warmup == True:
+            elif epoch == self.warmup_steps and self.warmup == True:
                 s = self.scheduler
                 self.warmup = False
                 print('Warmup finished')

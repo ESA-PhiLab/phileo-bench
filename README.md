@@ -140,6 +140,7 @@ The main file in this GitHub repository is "training_script.py". - The Jupyter N
 
 The main project webpage is [PhilEO-Bench](http://phileo-bench.github.io/).
 
+The paper can be found in [PhilEO-Paper](http://arxiv.org/pdf/2401.04464.pdf).
 
 ## Model Weights <a name="model_weights"></a>
 :bell:   **ALL models are available for non-commercial research purposes only.**
@@ -160,7 +161,7 @@ The main project webpage is [PhilEO-Bench](http://phileo-bench.github.io/).
 Some code from this repository is inspired by: 
 - [SatMAE repository](https://github.com/sustainlab-group/SatMAE)
 - [Prithvi repository](https://github.com/NASA-IMPACT/hls-foundation-os)
-- [Sesonal-Contrast repositry](https://github.com/ServiceNow/seasonal-contrast?tab=readme-ov-file).
+- [Seasonal-Contrast repository](https://github.com/ServiceNow/seasonal-contrast?tab=readme-ov-file).
 
 ## If you use our code, please cite:
 

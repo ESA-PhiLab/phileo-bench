@@ -70,7 +70,7 @@ for downstream_task in ['building', 'lc']: #
                 training_script.main(**vars(args))
           
             else:
-                for freeze in [False]:
+                for freeze in [False, True]:
                     args['freeze_pretrained'] = freeze
                     training_script.main(**vars(args))
 
